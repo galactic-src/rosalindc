@@ -111,9 +111,12 @@ int main(void)
 	   gc_content = line_gc_content;
    }
 	
+   free(line_buf);
 	fclose(f);
 
 	//puts("Result:");
 	puts(name);
 	printf("%f\n", gc_content);
+
+   return 0;
 }

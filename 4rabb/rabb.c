@@ -34,4 +34,5 @@ int main(int argv, char *argc[])
 	}
 
 	printf("F%d = %d\n", n+1, f_n_plus_1);
+   return 0;
 }
