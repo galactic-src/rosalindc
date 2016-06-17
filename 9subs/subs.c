@@ -102,11 +102,15 @@ int main(void)
       }
       substring_comparison = sub_string;
    }
-   
+
+   free(super_string);
+   free(sub_string);
+   fclose(f);
+
    if (il->count > 0)
    {
-      int index;
-      for (int i=0; i<(il->count); i++)
+      int i;
+      for (i=0; i<(il->count); i++)
       {
          printf("%d ", il_get(il, i));
       }
