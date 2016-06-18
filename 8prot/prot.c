@@ -24,10 +24,10 @@ int main(void)
 
    char bases[MAX_BP + 1];
    int bases_read = fread(bases, sizeof(char), MAX_BP, f);
-   if (bases[bases_read] != '\0' || bases[bases_read-1] != '\n' || (bases_read-1) % 3 > 0)
+   if (bases[bases_read-1] != '\n' || (bases_read-1) % 3 > 0)
    {
-      printf("should be 0: %d", bases[bases_read-1]);
-      printf("Read %d bases\n", bases_read-1);
+      printf("bases[bases_read-1] should be %d: was %d\n", '\n', bases[bases_read-1]);
+      printf("Read %d bases in total, expected divisible by 3. Remainder was %d\n", bases_read-1, (bases_read-1)%3);
    }
 
    int aa_string_index=0;
@@ -36,11 +36,11 @@ int main(void)
    for(i=0; i<(bases_read-1)/3; i++)
    {
       codon_start=i*3;
-      printf("Switching on codon at %d, %c%c%c\n", codon_start, bases[codon_start], bases[codon_start+1], bases[codon_start+2]);
+      //printf("Switching on codon at %d, %c%c%c\n", codon_start, bases[codon_start], bases[codon_start+1], bases[codon_start+2]);
       
       int aa_index = aa_hash(bases[codon_start], bases[codon_start+1], bases[codon_start+2]);
       char aa = aas[aa_index];
-      printf("Resulting AA: %c(%d) (index %d)\n", aa, aa, aa_index);
+      //printf("Resulting AA: %c(%d) (index %d)\n", aa, aa, aa_index);
       aa_string[aa_string_index++] = aa;
    }
 
@@ -52,7 +52,7 @@ int main(void)
 
 int aa_hash(char c1, char c2, char c3)
 {
-   printf("Base values: %d,%d,%d\n", base_value(c1)<<4, base_value(c2)<<2, base_value(c3));
+   //printf("Base values: %d,%d,%d\n", base_value(c1)<<4, base_value(c2)<<2, base_value(c3));
    return (base_value(c1) << 4) 
         | (base_value(c2) << 2)
         | base_value(c3);
