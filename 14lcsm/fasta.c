@@ -11,6 +11,14 @@ void init_char_array(struct char_array *ca)
    ca->data[0] = '\0';
 }
 
+struct char_array *attach_str(char *src)
+{
+   struct char_array *ca = malloc(sizeof(struct char_array));
+   ca->len = str_total_len(src);
+   ca->alloc = ca->len;
+   ca->data = src;
+}
+
 void free_char_array(struct char_array *ca)
 {
    free(ca->data);

@@ -11,6 +11,7 @@ size_t str_total_len(const char *s);
 void ensure_len(struct char_array *ca, int newlen);
 void append_chars(struct char_array *ca, char *src);
 char *copystr(char *src);
+struct char_array *attach_str(char *src);
 
 struct fasta
 {
