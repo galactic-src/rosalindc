@@ -33,7 +33,7 @@ struct base_tree_node *new_base_tree_node(char *parent_bases, char *base)
 
 void free_base_tree_node(struct base_tree_node *n)
 {
-   free(n->base_list);
+   free_char_array(n->base_list);
    free(n);
 }
 
