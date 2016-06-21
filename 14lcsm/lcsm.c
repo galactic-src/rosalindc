@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "fasta.h"
 
 struct base_tree_node;
@@ -188,36 +189,41 @@ void prune_tree(struct base_tree_node *n, int fasta_id)
    }
 }
 
-void log_tree(struct base_tree_node *n, int level)
+void find_longest_substring(struct base_tree_node *n, int level, char **longest, int *longest_level)
 {
-   printf("Level %d, fasta_id %d\n", level, n->fasta_id);
+   //printf("Level %d, fasta_id %d, string %s\n", level, n->fasta_id, n->base_list->data);
    if (n->A != NULL)
    {
-      puts("A");
-      log_tree(n->A, level+1);
+      //puts("A");
+      find_longest_substring(n->A, level+1, longest, longest_level);
    }
    if (n->C != NULL)
    {
-      puts("C");
-      log_tree(n->C, level+1);
+      //puts("C");
+      find_longest_substring(n->C, level+1, longest, longest_level);
    }
    if (n->G != NULL)
    {
-      puts("G");
-      log_tree(n->G, level+1);
+      //puts("G");
+      find_longest_substring(n->G, level+1, longest, longest_level);
    }
    if (n->T != NULL)
    {
-      puts("T");
-      log_tree(n->T, level+1);
+      //puts("T");
+      find_longest_substring(n->T, level+1, longest, longest_level);
    }
 
    if (n->A == NULL && n->C == NULL && n->G == NULL && n->T == NULL) 
    {
-      printf("leaf at lvl %d (%s) - ", level, n->base_list->data);
+      //printf("leaf at lvl %d (%s) - ", level, n->base_list->data);
+      if (level > *longest_level)
+      {
+         *longest_level = level;
+         *longest = n->base_list->data;
+      }
    }
 
-   puts("UP");
+   //puts("UP");
 }
 
 int main(void)
@@ -283,6 +289,7 @@ int main(void)
       }
    }
    free(current_line);
+   fclose(f);
 
    struct base_tree_node *base = new_base_tree_node("", "");
    struct fasta_node *fn = fastas.head;
@@ -293,7 +300,7 @@ int main(void)
       char *start = fn->fasta.dna.data;
       while (*start != '\0')
       {
-         printf("next substring: %s\n", start);
+         //printf("next substring: %s\n", start);
          suffix_tree_add(start, base, fasta_id);
          start++;
       }
@@ -304,12 +311,12 @@ int main(void)
       fasta_id++;
    }
 
-   puts("Logging Tree:");
-   log_tree(base, 0);
-
-   //char *best_str;
-   //size_t best_str_len=-1;
+   char *longest = NULL;
+   int longest_level=-1;
+   find_longest_substring(base, 0, &longest, &longest_level);
    
+   printf("%s\n", longest);
 
+   remove_subtree(base);
    free_fasta_nodes(&fastas);
 }
