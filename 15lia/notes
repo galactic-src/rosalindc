@@ -1,0 +1,21 @@
+AaBb x AaBb
+AA x Aa => P(AA) = 0.5, P(Aa) = 0.5, P(aa) = 0.0
+Aa x Aa => P(AA) = 0.25, P(Aa) = 0.5, P(aa) = 0.25
+aa x Aa => P(AA) = 0.0, P(Aa) = 0.5, P(aa) = 0.5
+
+Gen 0: 1 AaBb
+Gen 1: 2 individuals. 
+Gen 2: 4 individuals.
+
+k generations
+
+AABB = 1/16
+AABb
+AAbb
+AaBB
+AaBb
+Aabb
+aaBB
+aaBb
+aabb
+
