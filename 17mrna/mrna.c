@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 const int A_CODS = 4;
 const int C_CODS = 2;
@@ -25,7 +26,7 @@ const int STOP_CODS = 3;
 
 int get_cods_count(char aa)
 {
-   printf("char 0x%x (%c)\n", aa, aa);
+   //printf("char 0x%x (%c)\n", aa, aa);
    switch (aa)
    {
       case 'A':
@@ -69,8 +70,8 @@ int get_cods_count(char aa)
       case 'Y':
          return Y_CODS;
       default:
-         printf("Unrecognised amino acid 0x%x (%c)\n", aa, aa);
-         //exit(1);
+         // e.g. newline at end of file. Don't change number.
+         //printf("Unrecognised amino acid 0x%x (%c)\n", aa, aa);
          return 1;
    }
 }
@@ -93,39 +94,34 @@ int main(void)
    fclose(f);
 
    unsigned long result = 1UL;
+   unsigned long max_pre_mul = (ULONG_MAX/6)-1; //prevent overflow
 
-   unsigned long new_result = 0UL;
    char *aa = aas;
    int cod_count;
    while (*aa)
    {
       cod_count = get_cods_count(*aa);
-      printf("%c->%d\n",*aa, cod_count);
-      /*if (cod_count > 1)
+      //printf("%c->%d\n",*aa, cod_count);
+      if (cod_count != 1)
       {
-         new_result = result * cod_count;
-         if (new_result >= result)
+         if (result > max_pre_mul)
          {
-            result = new_result;
-         }
-         else
-         {
-            printf("%lu < %lu, taking mod\n", new_result, result);
-            //overflow - do mod
             result %= 1000000;
-            printf("After mod result = %lu\n", result);
-            result *= cod_count;
-         }*/
-      result %= 1000000;
-      result *= cod_count;
-      //}
-      printf("result=%lu\n", result);
+         }
+         result *= cod_count;
+      }
+
+      //printf("result=%lu\n", proper_result);
 
       aa++;
    }
 
-   result %= 1000000;
+   if (result > max_pre_mul)
+   {
+      result %= 1000000;
+   }
    result *= STOP_CODS;
    result %= 1000000;
+
    printf("%lu\n", result);
 }
