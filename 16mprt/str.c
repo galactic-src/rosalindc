@@ -44,9 +44,8 @@ void append_chars(struct char_array *ca, char *src)
 {
    int srclen = str_total_len(src);
    ensure_len(ca, ca->len + srclen);
-   memcpy(ca->data + ca->len - 1, src, srclen);
+   memcpy(ca->data + ca->len - 1, src, srclen); //includes terminating NUL
    ca->len = ca->len - 1 + srclen;
-   ca->data[ca->len] = '\0';
 }
 
 char *detach(struct char_array *ca)
