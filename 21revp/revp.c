@@ -2,7 +2,6 @@
 
 #include "str.h"
 #include "fasta.h"
-#include "locations.h"
 
 char dna_dna_comp(char base)
 {
@@ -174,4 +173,5 @@ int main(void)
    }
 
    free_fasta_list(fl);
+   return 0;
 }
