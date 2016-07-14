@@ -11,7 +11,14 @@ void print_permutations(const char const *alphabet, const int alphabet_size, cha
       print_buf[chars_set] = alphabet[i];
       if (do_print)
       {
-         printf("%s\n", print_buf);
+         /*FILE *out_f = fopen("output", "a+");
+         if (out_f == NULL)
+         {
+            puts("Failed to open output file");
+         }
+         fprintf(out_f, "%s\r\n", print_buf);
+         fclose(out_f);*/
+         printf("%s\r\n", print_buf);
       }
       else
       {
