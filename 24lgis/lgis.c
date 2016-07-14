@@ -43,15 +43,30 @@ struct int_list *read_data()
    while(fscanf(f, "%d", &i) != EOF)
    {
       il_add(il, i);
-      
    }
    if (il->count < count)
    {
       printf("got %d numbers, but expected %d\n", il->count, count);
       exit(1);
    }
+
+   fclose(f);
    
    return il;
+}
+
+void free_int_list_list(struct int_list_node *n)
+{
+   struct int_list_node *next = n;
+   while (next != NULL)
+   {
+      n = next;
+      next = n->next;
+      
+      il_free(n->inc_values);
+      il_free(n->dec_values);
+      free(n);
+   }
 }
 
 int main(void)
@@ -139,6 +154,9 @@ int main(void)
    //printf("Results:\n");
    log_il(longest_inc);
    log_il(longest_dec);
+
+   il_free(data);
+   free_int_list_list(head);
 
    return 0;
 }  
