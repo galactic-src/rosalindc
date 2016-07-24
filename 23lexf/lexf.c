@@ -18,7 +18,7 @@ void print_permutations(const char const *alphabet, const int alphabet_size, cha
          }
          fprintf(out_f, "%s\r\n", print_buf);
          fclose(out_f);*/
-         printf("%s\r\n", print_buf);
+         printf("%s\n", print_buf);
       }
       else
       {
