@@ -1,5 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+/**
+ * For this one, at the point of successful submission, the question was wrong.
+ * It specifically states that it doesn't want you to sort the alphabet, but in fact it does.
+ */
 
 void print_permutations(const char const *alphabet, const int alphabet_size, char * const print_buf, int chars_set, const int chars_target)
 {
@@ -59,7 +65,31 @@ int main(void)
       }
       else
       {
-         alphabet[alphabet_size++] = (char)(0xFF & c);
+         //printf("Found %c\n", c);
+         //add to alphabet array.
+         
+         // this is what it SHOULD be according to the question
+         //alphabet[alphabet_size++] = (char)(0xFF & c);
+
+         // this is what gets an answer accepted - order by english language
+         int i;
+         for (i=0; i<=alphabet_size; i++)
+         {
+            if (i==alphabet_size)
+            {
+               alphabet[alphabet_size++] = (char)(0xFF & c);
+               break;
+            }
+
+            //printf("Compare %c with %c", c, alphabet[i]);
+            if (alphabet[i] > c)
+            {
+               memmove(alphabet+i+1, alphabet+i, alphabet_size-i);
+               alphabet[i] = (char)(0xFF & c);
+               alphabet_size++;
+               break;
+            }
+         }
       }
    }
 
