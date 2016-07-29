@@ -3,6 +3,8 @@
 
 #include "fasta.h"
 
+// gcc corr.c fasta.c str.c -o corr
+
 char complement(char base)
 {
    switch (base)
@@ -29,7 +31,7 @@ struct char_array *get_complement(struct char_array *dna)
    {
       complementary[ix] = complement((dna->data)[ix]);
    }
-   char last_char = complementary[dna->len-1];
+   //char last_char = complementary[dna->len-1];
    complementary[dna->len-1] = '\0';
 
    struct char_array *complement = attach_str(complementary);
@@ -68,6 +70,17 @@ int hamm_dist(char *s1, char *s2)
 int main(void)
 {
    struct fasta_list *fl = parse_fasta_file("data");
+   /*   
+   log_fasta_list(fl);
+   int remaining = 0;
+   struct fasta_node *fn_count = fl->head;
+   while (fn_count != NULL)
+   {
+      ++remaining;
+      fn_count = fn_count->next;
+   }
+   printf("Found %d fastas\n", remaining);
+   */
 
    struct char_array_list *good_reads = new_char_array_list();
    struct char_array_list *bad_reads = new_char_array_list();
@@ -87,7 +100,7 @@ int main(void)
 
       // each string has a pair, either identical, or 1 base out.
       fn = fl->head;
-      //printf("Removing %s (next to match)\n", fn->fasta.dna.data);
+      //printf("Removing %s (next to match).\n", fn->fasta.dna.data);
       fn_rev_comp = get_complement(&fn->fasta.dna);
 
       // remove from the list of remaining

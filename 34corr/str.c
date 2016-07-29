@@ -153,7 +153,7 @@ void cal_ensure_size(struct char_array_list *list, int size)
    while (list->alloc < size)
    {
       list->alloc *= 2;
-      list->strs = realloc(list->strs, list->alloc);
+      list->strs = realloc(list->strs, list->alloc * sizeof(void*));
    }
 }
 
