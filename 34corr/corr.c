@@ -40,20 +40,25 @@ struct char_array *get_complement(struct char_array *dna)
 /*
  * Return 0 if identical, 1 if off-by-1, 2 if more than 1
  */
-int how_similar(char *s1, char *s2)
+int hamm_dist(char *s1, char *s2)
 {
    int differences = 0;
    while (1)
    {
       if (*(s1++) != *(s2++))
       {
+         //printf("difference: %c != %c\n", *(s1-1), *(s2-1));
          differences++;
-         if (differences == 2
-            // We are given that the strings will have equal length/. If we've reached the end, we're done
-            || *s1 == '\0')
+         if (differences == 2)
          {
             break;
          }
+      }
+
+      // We are given that the strings will have equal length/. If we've reached the end, we're done
+      if (*s1 == '\0')
+      {
+         break;
       }
    }
 
@@ -64,20 +69,32 @@ int main(void)
 {
    struct fasta_list *fl = parse_fasta_file("data");
 
-   struct char_array_list *corrections = new_char_array_list();
+   struct char_array_list *good_reads = new_char_array_list();
+   struct char_array_list *bad_reads = new_char_array_list();
 
-   struct fasta_node *next;
-   struct char_array *next_rev_comp;
+   struct fasta_node *fn;
+   struct char_array *fn_rev_comp;
    struct fasta_node *cmp;
    while (fl->head != NULL)
    {
-      // each string has a pair, either identical, or 1 base out.
-      next = fl->head;
-      next_rev_comp = get_complement(&next->fasta.dna);
-      fl->head = next->next;
+      int matches_found = 0;
 
-      //printf("next: %s\n", next->fasta.dna.data);
-      //printf("next revcomp: %s\n", next_rev_comp->data);
+      /*
+      puts("***REMAINING FASTAS TO MATCH***");
+      log_fasta_list(fl);
+      puts("*******************************");
+      */
+
+      // each string has a pair, either identical, or 1 base out.
+      fn = fl->head;
+      //printf("Removing %s (next to match)\n", fn->fasta.dna.data);
+      fn_rev_comp = get_complement(&fn->fasta.dna);
+
+      // remove from the list of remaining
+      fl->head = fn->next;
+
+      //printf("fn: %s\n", next->fasta.dna.data);
+      //printf("fn revcomp: %s\n", next_rev_comp->data);
 
       //Compare both the string and the reverse complement with each remaining DNA string.
       struct fasta_node *cmp = fl->head;
@@ -85,35 +102,97 @@ int main(void)
       int how_similar;
       while (cmp != NULL)
       {
-         how_similar = how_similar(next->fasta.dna.data, cmp->fasta.dna.data);
-         if (how_similar < 2)
+         if (!strcmp(fn->fasta.dna.data, cmp->fasta.dna.data)
+           || !strcmp(fn_rev_comp->data, cmp->fasta.dna.data))
          {
-            if (how_similar == 1)
-            {
-               //add to list of corrections
-               struct char_array *corr = clone_ca(
-               corrections, next->
-            }
-
+            matches_found++;
+            
             //remove from remaining and free
-            cmp_prev->next = cmp->next;
+            //printf("Removing %s (matched)\n", cmp->fasta.dna.data);
+            if (cmp_prev != NULL)
+            {
+               cmp_prev->next = cmp->next;
+            }
+            else
+            {
+               fl->head = cmp->next;
+            }
             free_fasta_node(cmp);
+            //puts("Freed fasta");
+            //cmp_prev remains the same
+         }
+         else
+         {
+            cmp_prev = cmp;
          }
 
-         // try the reverse complement
-
-         cmp_prev = cmp;
-         cmp = cmp->next;
+         if (cmp_prev != NULL)
+         {
+            cmp = cmp_prev->next;
+         }
+         else
+         {
+            cmp = fl->head;
+         }
       }
-      if (cmp == NULL)
+
+      if (matches_found)
       {
-         printf("didn't match anything for string %s - cmp was NULL\n", next->fasta.dna.data);
-         exit(1);
+         //puts("Match found");
+         // add the dna and its complement as "good" reads
+         cal_add(good_reads, clone_ca(&fn->fasta.dna));
+         cal_add(good_reads, fn_rev_comp);
       }
-      
-      // since we've matched up, we can remove the match from the list too
-      
+      else
+      {
+         //puts("Match not found");
+         // add the dna as a bad read
+         cal_add(bad_reads, clone_ca(&fn->fasta.dna));
+         // in this case we need to tidy up the complement too
+         free_char_array(fn_rev_comp);
+      }
 
-      // free next, since it's been removed from the list
+      // free fn, since it's been removed from the list
+      free_fasta_node(fn);
+      //puts("FREED");
    }
+
+   free_fasta_list(fl);
+
+   struct char_array_list *corrections = new_char_array_list();
+   int bad_ix;
+   struct char_array *bad_ca;
+   int good_ix;
+   struct char_array *good_ca;
+   for (bad_ix=0; bad_ix<bad_reads->len; bad_ix++)
+   {
+      int found = 0;
+      bad_ca = bad_reads->strs[bad_ix];
+      for (good_ix=0; good_ix<good_reads->len; good_ix++)
+      {
+         good_ca = good_reads->strs[good_ix];
+         if (hamm_dist(bad_ca->data, good_ca->data) == 1)
+         {
+            // found the correct version - add correction
+            struct char_array *correction = clone_ca(bad_ca);
+            append_chars(correction, "->");
+            append_chars(correction, good_ca->data);
+            cal_add(corrections, correction);
+            found = 1;
+            break;
+         }
+      }
+
+      if (!found)
+      {
+         printf("failed to find match for bad string %s\n", bad_ca->data);
+      }
+   }
+
+   log_cal(corrections);
+   free_cal(good_reads);
+   free_cal(bad_reads);
+   free_cal(corrections);
+
+   return 0;
 }

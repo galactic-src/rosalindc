@@ -179,7 +179,7 @@ void free_cal(struct char_array_list *list)
    int i;
    for (i=0; i<list->len; i++)
    {
-      printf("Freeing %d \"%s\"\n", i, list->strs[i]->data);
+      //printf("Freeing %d \"%s\"\n", i, list->strs[i]->data);
       free_char_array(list->strs[i]);
    }
    free(list->strs);
