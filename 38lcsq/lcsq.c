@@ -35,24 +35,71 @@ struct grid_node *get_node(struct 2d_dyn_grid *grid, int x, int y)
 	return grid->data[y*grid->width + x];
 }
 
+void set_node_data(struct grid_node *node, char c)
+{
+	switch(c)
+	{
+		case 'A':
+			node->data = &DATA_A;
+			break;
+		case 'C':
+			node->data = &DATA_C;
+			break;
+		case 'G':
+			node->data = &DATA_G;
+			break;
+		case 'T':
+			node->data = &DATA_T;
+			break;
+		default:
+			printf("set_node_data: Unrecognised char %c (%x)", c, c);
+			exit(1);
+	}
+}
+
 void populate_grid(struct 2d_dyn_grid *grid, struct char_array *dna1, struct char_array *dna2)
 {
-
 	int dna1_ix; // x coord
 	int dna2_ix;
-	for (dna1_ix=0; dna1_ix<dna1->len-1; dna1_ix++)
+	for (dna2_ix=0; dna2_ix<dna2->len-1; dna2_ix++)
 	{
 		//populate each row
-		char c1 = dna1->data[dna1_ix];
-		for (dna2_ix=0; dna2_ix<dna2->len-1; dna2_ix++)
+		char c2 = dna2->data[dna2_ix];
+		for (dna1_ix=0; dna1_ix<dna1->len-1; dna1_ix++)
 		{
 			// populate each column of the row
-			char c2 = dna2->data[dna2_ix];
-			struct grid_node *node = get_node(grid, 
+			char c1 = dna1->data[dna1_ix];
+			struct grid_node *node = get_node(grid, dna1_ix, dna2_ix);
 
-			// find best parent
+			if (c1 == c2)
+			{
+				set_node_data(node, c1);
+			}
 
-			// set char if required
+			if (dna1_ix == 0
+			  && dna2_ix == 0)
+			{
+				node->parent = NULL;
+			}
+			else if (dna1_ix == 0)
+			{
+				if (c1 == c2)
+				{
+					node->parent = NULL;
+				}
+				else
+				{
+					
+				}
+			}
+			else if (dna2_ix == 0)
+			{
+				
+			}
+			else
+			{
+				
+			}
 		}
 	}
 }
