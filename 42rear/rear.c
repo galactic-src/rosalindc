@@ -395,14 +395,13 @@ int main(void)
    for (pair_ix=0; pair_ix<list->len; pair_ix++)
    {
       struct int_array_pair *pair = list->data[pair_ix];
-      //puts("New count node");
-      struct ia_count *to_try = new_count_node();
-      //puts("inverting");
       invert_arrays(pair);
-      //puts("Array inverted");
-      to_try->ints = malloc(10*sizeof(int));
+
+      struct ia_count *to_try = new_count_node();
       memcpy(to_try->ints, pair->ints2, 10*sizeof(int));
+
       struct hashmap *tried = new_map();
+
       int distance = calculate_distance(to_try, to_try, tried);
       il_add(results, distance);
       hm_free(tried);
