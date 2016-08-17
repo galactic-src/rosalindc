@@ -56,4 +56,6 @@ int main(void)
    printf("%lf\n", prob_at_least_one_generated);
 
    fclose(f);
+
+   return 0;
 }
