@@ -104,7 +104,7 @@ void log_parent_chain(struct grid_node *node)
    }
    else if (node->data == NULL)
    {
-      puts("node->dat awas null");
+      puts("node->data was null");
    }*/
 
    while (node != NULL 
